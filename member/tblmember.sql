@@ -1,0 +1,8 @@
+CREATE TABLE tblMember(
+ num INT AUTO_INCREMENT,
+ name CHAR(20) NOT NULL,
+ phone CHAR(20) NOT NULL,
+ address CHAR(70) NOT NULL,
+ team CHAR(20) NOT NULL,
+ PRIMARY KEY(num)
+ )
