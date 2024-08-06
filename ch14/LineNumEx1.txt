@@ -1,0 +1,35 @@
+package ch14;1 : package ch14;
+2 : 
+import java.io.BufferedReader;3 : import java.io.BufferedReader;
+import java.io.FileOutputStream;4 : import java.io.FileOutputStream;
+import java.io.FileReader;5 : import java.io.FileReader;
+import java.io.FileWriter;6 : import java.io.FileWriter;
+import java.io.PrintStream;7 : import java.io.PrintStream;
+8 : 
+public class LineNumEx1 {9 : public class LineNumEx1 {
+	public static void main(String[] args) {10 : 	public static void main(String[] args) {
+		try {11 : 		try {
+			FileReader fr = new FileReader("ch14/LineNumEx1.java");12 : 			FileReader fr = new FileReader("ch14/LineNumEx1.java");
+			BufferedReader br = new BufferedReader(fr);13 : 			BufferedReader br = new BufferedReader(fr);
+			FileOutputStream fos = new FileOutputStream("ch14/LineNumEx1.txt");14 : 			FileOutputStream fos = new FileOutputStream("ch14/LineNumEx1.txt");
+			//다목적 출력 스트림15 : 			//다목적 출력 스트림
+			PrintStream ps = new PrintStream(fos);16 : 			PrintStream ps = new PrintStream(fos);
+			String str = "";17 : 			String str = "";
+			int i = 1;18 : 			int i = 1;
+			while (true) {19 : 			while (true) {
+				str= br.readLine();20 : 				str= br.readLine();
+				if(str == null) break;21 : 				if(str == null) break;
+				str+=i+" : "+str;22 : 				str+=i+" : "+str;
+				ps.println(str);23 : 				ps.println(str);
+				i++;24 : 				i++;
+			}25 : 			}
+			ps.close();26 : 			ps.close();
+			fos.close();27 : 			fos.close();
+			br.close();28 : 			br.close();
+			fr.close();29 : 			fr.close();
+			System.out.println("END_____________________");30 : 			System.out.println("END_____________________");
+		} catch (Exception e) {31 : 		} catch (Exception e) {
+			e.printStackTrace();32 : 			e.printStackTrace();
+		}33 : 		}
+	}34 : 	}
+}35 : }
