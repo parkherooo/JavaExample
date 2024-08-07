@@ -29,6 +29,7 @@ implements ActionListener, Runnable{
 	String id;
 	public static final int PORT = 8001;
 	String host = "127.0.0.1";
+	//String host = "172.17.117.236";
 	//String host = "113.198.238.123";//°­»çPC
 	String swear[] = {"°³»õ³¢", "º´½Å", "¾¾¹ß", "¿³¸Ô¾î", "¹ÌÄ£³ð", "¹ÌÄ£³â"};
 	
@@ -118,8 +119,8 @@ implements ActionListener, Runnable{
 	
 	//return : true <- ¿å¼³
 	public boolean filterMgr(String msg){
-		for (int i = 0; i < swear.length; i++) {
-			if(swear[i].equals(msg)||msg.indexOf(swear[i])!=-1) {
+		for (String s : swear) {
+			if(msg.contains(s)) {
 				return true;
 			}
 		}
@@ -130,6 +131,3 @@ implements ActionListener, Runnable{
 		new ChatClient1();
 	}
 }
-
-
-
