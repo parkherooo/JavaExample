@@ -16,8 +16,12 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.StringTokenizer;
@@ -37,9 +41,9 @@ public class ChatClient2 extends JFrame implements ActionListener, Runnable {
 	Socket sock;
 	BufferedReader in;
 	PrintWriter out;
-	String listTitle = "*******��ȭ�ڸ���*******";
+	String listTitle = "*******대화자명단*******";
 	boolean flag = false;
-	String swear[] = { "������", "����", "����", "���Ծ�", "��ģ��", "��ģ��" };
+	String swear[] = { "개새끼", "병신", "씨발", "엿먹어", "미친놈", "미친년" };
 
 	public ChatClient2() {
 		setSize(450, 500);
@@ -108,19 +112,83 @@ public class ChatClient2 extends JFrame implements ActionListener, Runnable {
 	}// --run
 
 	public void routine(String line) {
+		//CHATALL:오늘은 정말즐거운 목요일입니다,
+		int idx= line.indexOf(ChatProtocol2.MODE1);
+		String cmd = line.substring(0,idx);
+		String data = line.substring(idx+1);
+		if(cmd.equals(ChatProtocol2.CHATLIST)) {
+			//data:aaa;bbb;ccc;
+			list.removeAll();
+			list.add(listTitle);
+			String items[]=data.split(ChatProtocol2.MODE2); 
+			for (String item : items) {
+				list.add(item);
+			}
+		} else if (cmd.equals(ChatProtocol2.CHAT)||cmd.equals(ChatProtocol2.CHATALL)) {
+			area.append(data+"\n");
+		} else if (cmd.equals(ChatProtocol2.MESSAGE)) {
+			//data : bbb;오늘은 와이프 생일.
+			idx= data.indexOf(ChatProtocol2.MODE2);
+			cmd = data.substring(0,idx);
+			data = data.substring(idx+1);
+			new Message("FROM :",cmd/*bbb*/,data);
+		}
 		
 	}// --routine
 
 	public void actionPerformed(ActionEvent e) {
 		Object obj = e.getSource();
 		if(obj==bt1) {
-			
+			new Thread(this).start(); //run 메소드
+			bt1.setEnabled(false);
+			tf1.setEnabled(false);
+			tf2.setEnabled(false);
+			area.setText("");
+			tf3.requestFocus();
 		}else if(obj==bt2) {
-			
+			try {
+				saveFile(area.getText());
+			} catch (Exception e2) {
+				e2.printStackTrace();
+			}
 		}else if(obj==bt3) {
-			
+			int idx = list.getSelectedIndex();
+			if(idx==-1||idx==0) {
+				new DialogBox(this,"아이디를 선택하세요.","알림");
+			} else {
+				new Message("TO:");
+			}
 		}else if(obj==bt4||obj==tf3) {
-		
+			String str = tf3.getText();
+			if(str.trim().length()==0) {
+				tf3.setText("");
+				tf3.requestFocus();
+				return;
+			}
+			if(filterMgr(str)) {
+				new DialogBox(this, "금지어입니다.", "경고");
+				tf3.setText("");
+				tf3.requestFocus();
+				return;
+			}
+			if(!flag) { //아이디 입력일때
+				sendMessage(ChatProtocol2.ID+ChatProtocol2.MODE1+str);
+				setTitle(getTitle()+"-"+str+"님 반갑습니다.");
+				area.setText("");
+				tf3.setText("");
+				tf3.requestFocus();
+				flag =true;
+			} else {
+				int idx = list.getSelectedIndex();
+				if(idx ==-1 || idx ==0) { //전체채팅
+					sendMessage(ChatProtocol2.CHATALL+ChatProtocol2.MODE1+str);
+				} else { //귓속말 채팅
+					String id = list.getSelectedItem();
+					sendMessage(ChatProtocol2.CHAT+ChatProtocol2.MODE1+id+ChatProtocol2.MODE2+str);
+				}
+				tf3.setText("");
+				tf3.requestFocus();
+			}
 		}
 	}// --actionPerformed
 
@@ -138,7 +206,7 @@ public class ChatClient2 extends JFrame implements ActionListener, Runnable {
 		out.println(msg);
 	}
 
-	// return : true <- �弳
+	// return : true <- 욕설
 	public boolean filterMgr(String msg) {
 		for (String s : swear) {
 			if(msg.contains(s)) {
@@ -146,6 +214,23 @@ public class ChatClient2 extends JFrame implements ActionListener, Runnable {
 			}
 		}
 		return false;
+	}
+	public void saveFile(String msg) {
+		try {
+			long fName = System.currentTimeMillis();
+			File file = 
+				new File("net/"+fName+".txt");
+	        BufferedWriter bw = new BufferedWriter(
+	        		new OutputStreamWriter(
+	        				new FileOutputStream(file), "euc-kr"));
+	        bw.write(msg);
+	        bw.flush();
+	        bw.close();
+			area.setText("");
+			new DialogBox(this, "대화내용을 저장하였습니다","알림");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	class Message extends Frame implements ActionListener {
@@ -157,7 +242,7 @@ public class ChatClient2 extends JFrame implements ActionListener, Runnable {
 		String id;
 
 		public Message(String mode) {
-			setTitle("����������");
+			setTitle("쪽지보내기");
 			this.mode = mode;
 			id = list.getSelectedItem();
 			layset("");
@@ -165,7 +250,7 @@ public class ChatClient2 extends JFrame implements ActionListener, Runnable {
 		}
 
 		public Message(String mode, String id, String msg) {
-			setTitle("�����б�");
+			setTitle("쪽지읽기");
 			this.mode = mode;
 			this.id = id;
 			layset(msg);
