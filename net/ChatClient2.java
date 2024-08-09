@@ -41,9 +41,9 @@ public class ChatClient2 extends JFrame implements ActionListener, Runnable {
 	Socket sock;
 	BufferedReader in;
 	PrintWriter out;
-	String listTitle = "*******ëŒ€í™”ìëª…ë‹¨*******";
+	String listTitle = "*******´ëÈ­ÀÚ¸í´Ü*******";
 	boolean flag = false;
-	String swear[] = { "ê°œìƒˆë¼", "ë³‘ì‹ ", "ì”¨ë°œ", "ì—¿ë¨¹ì–´", "ë¯¸ì¹œë†ˆ", "ë¯¸ì¹œë…„" };
+	String swear[] = { "°³»õ³¢", "º´½Å", "¾¾¹ß", "¿³¸Ô¾î", "¹ÌÄ£³ğ", "¹ÌÄ£³â" };
 
 	public ChatClient2() {
 		setSize(450, 500);
@@ -112,7 +112,7 @@ public class ChatClient2 extends JFrame implements ActionListener, Runnable {
 	}// --run
 
 	public void routine(String line) {
-		//CHATALL:ì˜¤ëŠ˜ì€ ì •ë§ì¦ê±°ìš´ ëª©ìš”ì¼ì…ë‹ˆë‹¤,
+		//CHATALL:¿À´ÃÀº Á¤¸»Áñ°Å¿î ¸ñ¿äÀÏÀÔ´Ï´Ù,
 		int idx= line.indexOf(ChatProtocol2.MODE1);
 		String cmd = line.substring(0,idx);
 		String data = line.substring(idx+1);
@@ -127,7 +127,7 @@ public class ChatClient2 extends JFrame implements ActionListener, Runnable {
 		} else if (cmd.equals(ChatProtocol2.CHAT)||cmd.equals(ChatProtocol2.CHATALL)) {
 			area.append(data+"\n");
 		} else if (cmd.equals(ChatProtocol2.MESSAGE)) {
-			//data : bbb;ì˜¤ëŠ˜ì€ ì™€ì´í”„ ìƒì¼.
+			//data : bbb;¿À´ÃÀº ¿ÍÀÌÇÁ »ıÀÏ.
 			idx= data.indexOf(ChatProtocol2.MODE2);
 			cmd = data.substring(0,idx);
 			data = data.substring(idx+1);
@@ -139,7 +139,7 @@ public class ChatClient2 extends JFrame implements ActionListener, Runnable {
 	public void actionPerformed(ActionEvent e) {
 		Object obj = e.getSource();
 		if(obj==bt1) {
-			new Thread(this).start(); //run ë©”ì†Œë“œ
+			new Thread(this).start(); //run ¸Ş¼Òµå
 			bt1.setEnabled(false);
 			tf1.setEnabled(false);
 			tf2.setEnabled(false);
@@ -154,7 +154,7 @@ public class ChatClient2 extends JFrame implements ActionListener, Runnable {
 		}else if(obj==bt3) {
 			int idx = list.getSelectedIndex();
 			if(idx==-1||idx==0) {
-				new DialogBox(this,"ì•„ì´ë””ë¥¼ ì„ íƒí•˜ì„¸ìš”.","ì•Œë¦¼");
+				new DialogBox(this,"¾ÆÀÌµğ¸¦ ¼±ÅÃÇÏ¼¼¿ä.","¾Ë¸²");
 			} else {
 				new Message("TO:");
 			}
@@ -166,23 +166,23 @@ public class ChatClient2 extends JFrame implements ActionListener, Runnable {
 				return;
 			}
 			if(filterMgr(str)) {
-				new DialogBox(this, "ê¸ˆì§€ì–´ì…ë‹ˆë‹¤.", "ê²½ê³ ");
+				new DialogBox(this, "±İÁö¾îÀÔ´Ï´Ù.", "°æ°í");
 				tf3.setText("");
 				tf3.requestFocus();
 				return;
 			}
-			if(!flag) { //ì•„ì´ë”” ì…ë ¥ì¼ë•Œ
+			if(!flag) { //¾ÆÀÌµğ ÀÔ·ÂÀÏ¶§
 				sendMessage(ChatProtocol2.ID+ChatProtocol2.MODE1+str);
-				setTitle(getTitle()+"-"+str+"ë‹˜ ë°˜ê°‘ìŠµë‹ˆë‹¤.");
+				setTitle(getTitle()+"-"+str+"´Ô ¹İ°©½À´Ï´Ù.");
 				area.setText("");
 				tf3.setText("");
 				tf3.requestFocus();
 				flag =true;
 			} else {
 				int idx = list.getSelectedIndex();
-				if(idx ==-1 || idx ==0) { //ì „ì²´ì±„íŒ…
+				if(idx ==-1 || idx ==0) { //ÀüÃ¼Ã¤ÆÃ
 					sendMessage(ChatProtocol2.CHATALL+ChatProtocol2.MODE1+str);
-				} else { //ê·“ì†ë§ ì±„íŒ…
+				} else { //±Ó¼Ó¸» Ã¤ÆÃ
 					String id = list.getSelectedItem();
 					sendMessage(ChatProtocol2.CHAT+ChatProtocol2.MODE1+id+ChatProtocol2.MODE2+str);
 				}
@@ -206,7 +206,7 @@ public class ChatClient2 extends JFrame implements ActionListener, Runnable {
 		out.println(msg);
 	}
 
-	// return : true <- ìš•ì„¤
+	// return : true <- ¿å¼³
 	public boolean filterMgr(String msg) {
 		for (String s : swear) {
 			if(msg.contains(s)) {
@@ -227,7 +227,7 @@ public class ChatClient2 extends JFrame implements ActionListener, Runnable {
 	        bw.flush();
 	        bw.close();
 			area.setText("");
-			new DialogBox(this, "ëŒ€í™”ë‚´ìš©ì„ ì €ì¥í•˜ì˜€ìŠµë‹ˆë‹¤","ì•Œë¦¼");
+			new DialogBox(this, "´ëÈ­³»¿ëÀ» ÀúÀåÇÏ¿´½À´Ï´Ù","¾Ë¸²");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -242,7 +242,7 @@ public class ChatClient2 extends JFrame implements ActionListener, Runnable {
 		String id;
 
 		public Message(String mode) {
-			setTitle("ìª½ì§€ë³´ë‚´ê¸°");
+			setTitle("ÂÊÁöº¸³»±â");
 			this.mode = mode;
 			id = list.getSelectedItem();
 			layset("");
@@ -250,7 +250,7 @@ public class ChatClient2 extends JFrame implements ActionListener, Runnable {
 		}
 
 		public Message(String mode, String id, String msg) {
-			setTitle("ìª½ì§€ì½ê¸°");
+			setTitle("ÂÊÁöÀĞ±â");
 			this.mode = mode;
 			this.id = id;
 			layset(msg);
